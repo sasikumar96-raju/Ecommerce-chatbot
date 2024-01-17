@@ -14,7 +14,6 @@ def preprocess_text(text):
 
     return tokens
 
-
 def perform_sentiment_analysis(tokens):
     text = ' '.join(tokens)
     sid = SentimentIntensityAnalyzer()

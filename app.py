@@ -8,7 +8,6 @@ nltk.download('wordnet')
 nltk.download('vader_lexicon')
 
 from preprocess_data import preprocess_text, perform_sentiment_analysis
-
 app_path = "/home/ubuntu/app"
 
 source_complaint_data = r'./updated_feedback_data.csv'
@@ -50,11 +49,10 @@ def insert_product_data():
 
 
 @app.route('/review', methods =["POST"])
-def get_response():
+def get_service_response():
     review = request.form['review']
     preprocessed_tokens = preprocess_text(review)
     sentimental_analysis = perform_sentiment_analysis(preprocessed_tokens)
-
     return "Successfully inserted products"
 
 
