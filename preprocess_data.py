@@ -2,6 +2,7 @@ import datetime
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.sentiment import SentimentIntensityAnalyzer
+import nltk
 nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('vader_lexicon')
@@ -11,7 +12,6 @@ def preprocess_text(text):
     tokens = [token for token in tokens if token.isalnum()]
     lemmatizer = WordNetLemmatizer()
     tokens = [lemmatizer.lemmatize(token) for token in tokens]
-
     return tokens
 
 def perform_sentiment_analysis(tokens):

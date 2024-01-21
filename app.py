@@ -8,6 +8,7 @@ nltk.download('wordnet')
 nltk.download('vader_lexicon')
 
 from preprocess_data import preprocess_text, perform_sentiment_analysis
+from inference import get_result
 app_path = "/home/ubuntu/app"
 
 source_complaint_data = r'./updated_feedback_data.csv'
@@ -20,7 +21,7 @@ db_config = {
     'password': 'ubuntu',
     'host': 'localhost',
     'database': 'sample_ecom',
-    'port': 3306  # Change if your MySQL server is running on a different port
+    'port': 3306
 }
 
 
@@ -53,7 +54,8 @@ def get_service_response():
     review = request.form['review']
     preprocessed_tokens = preprocess_text(review)
     sentimental_analysis = perform_sentiment_analysis(preprocessed_tokens)
-    return "Successfully inserted products"
+    prediction = get_result(review)
+    return prediction
 
 
 if __name__ == '__main__':
