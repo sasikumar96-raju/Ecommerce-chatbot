@@ -93,3 +93,62 @@ This Flask application is a customer service chatbot for an Ecommerce platform, 
         ```
 
         Set the body as form data with key "review" and the user's message as the value. Execute the request to get the customer service response as a string in the output.
+
+**Examples**
+    
+    - User text:
+    
+        Hi how are you
+
+
+    - Chatbot response:
+    
+        Hi! I'm doing well, thank you. How can I assist you today?
+
+    - User text:
+        
+        Delivered on right time thank you
+    
+    - Chatbot response:
+
+        Hey there! Perfect is what we aim for! If there's anything else you need or if you have more orders in the future, we're
+        ready to assist.
+
+    - User text:
+   
+        Worst service!
+    
+    - Chatbot response:
+
+        We're sorry to hear about your unsatisfactory experience. Please provide details about the issue, and we'll do our best
+        to address and resolve it for you.
+    
+    - User text:
+
+        My phone is very good
+
+    - Chatbot response:
+
+        Good day! Thank you for the compliment on our product quality. We're committed to delivering excellence. Anything
+        specific you'd like to know or explore?
+    
+    - User text:
+        
+        Can you help me with product details
+
+    - Chatbot response:
+
+        Please provide product details like `Product: your product model name
+
+    - User text:
+
+        Product:Moto E
+
+    - Chatbot response:
+
+        Hi! The product price for Moto E is 8684 and its rating is 3.0
+
+        
+
+        ``````
+    
