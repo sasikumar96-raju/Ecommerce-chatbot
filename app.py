@@ -50,7 +50,7 @@ def insert_product_data():
     return "Successfully inserted products"
 
 
-@app.route('/review', methods =["POST"])
+@app.route('/review', methods=["POST"])
 def get_service_response():
     review = request.form['review']
     preprocessed_tokens = preprocess_text(review)

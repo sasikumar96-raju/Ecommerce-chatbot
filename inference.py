@@ -27,36 +27,24 @@ positive_keywords = ["good","great", "excellent", "fantastic", "wonderful", "awe
 negative_keywords = ["sorry", "apologies", "unfortunate", "concerned", "frustrated", "regret", "disappointing", "issue", "challenge", "problem"]
 
 
-# with open('/home/ubuntu/Downloads/labels.json', 'r') as labels:
-#     label_dict = json.load(labels)
-# model_path = '/home/ubuntu/Downloads/bert_model/content/bert_model'
-
-
-# def get_intent(message):
-#     model = load_model(model_path)
-#     predictions = model.predict([message])
-#     class_labels = list(label_dict.keys())
-#     predicted_class_index = np.argmax(predictions)
-#     predicted_class = class_labels[predicted_class_index]
-#     return predicted_class
-
-
-def extract_entities(message):
+def extract_entities(message, db_config):
     try:
         split_message = message.split(":", 1)
         if len(split_message) == 2:
-            extracted_text = split_string[1].strip()
+            extracted_text = split_message[1].strip()
             where_condition = f"name = '{extracted_text}'"
             query = f"SELECT * FROM products WHERE {where_condition}"
-            engine = create_engine(
-                f"mysql+pymysql://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}")
+            engine = create_engine(f"mysql+pymysql://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}")
             df = pd.read_sql_query(query, con=engine)
+            if len(df) == 0:
+                return "Please provide a valid Product name"
             engine.dispose()
             product_name, price, rating = df.iloc[0]['name'], df.iloc[0]['price'], df.iloc[0]['rating']
             return f"Hi! The product price for {product_name} is {price} and its rating is {rating}"
         else:
             return "Please provide product details like `Product: your product model name `"
     except Exception as e:
+        print(e)
         return "Please provide product details like `Product: your product model name `"
 
 
@@ -67,7 +55,7 @@ def has_common_elements(list1, list2):
 def get_result(message, db_config, sentiment_score, preprocessed_tokens):
     if has_common_elements(preprocessed_tokens, product_keywords):
         # intent = 'Product'
-        entities = extract_entities(message)
+        entities = extract_entities(message, db_config)
         return entities
     elif has_common_elements(preprocessed_tokens, greetings_keywords):
         intent = 'Greetings'
@@ -75,7 +63,6 @@ def get_result(message, db_config, sentiment_score, preprocessed_tokens):
         intent = "Positive Feedback"
     elif has_common_elements(preprocessed_tokens, negative_keywords) or sentiment_score < 0.5:
         intent = "Negative Feedback"
-    print(intent)
     where_condition = f"intent = '{intent}'"
     query = f"SELECT * FROM customer_feedback WHERE {where_condition}"
     engine = create_engine(f"mysql+pymysql://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}")
@@ -88,5 +75,3 @@ def get_result(message, db_config, sentiment_score, preprocessed_tokens):
     max_similarity_index = cosine_sim_values.argmax()
     most_similar_row = df.loc[max_similarity_index]
     return most_similar_row.response_text
-
-
