@@ -11,8 +11,8 @@ from preprocess_data import preprocess_text, perform_sentiment_analysis
 from inference import get_result
 app_path = "/home/ubuntu/app"
 
-source_complaint_data = r'./updated_feedback_data.csv'
-source_products_data = r'./data.csv'
+source_complaint_data = '/home/ubuntu/Documents/ecommerce_charbot/src/updated_feedback_data.csv'
+source_products_data = '/home/ubuntu/Documents/ecommerce_charbot/src/data.csv'
 
 app = Flask(__name__)
 
@@ -28,12 +28,14 @@ db_config = {
 @app.route('/insert_review', methods =["POST"])
 def insert_review_data():
     df = pd.read_csv(source_complaint_data)
-    df = df.drop('Intent', axis=1)
+    df['preprocessed_text'] = df['complaint_text'].apply(preprocess_text)
+    df['sentiment_score'] = df['preprocessed_text'].apply(perform_sentiment_analysis)
+    df = df.drop(columns=['preprocessed_text'])
     df['date_of_complain'] = pd.to_datetime(df['date_of_complain'], format='%Y-%m-%d', errors='coerce')
     df['time_of_complain'] = pd.to_datetime(df['time_of_complain'], format='%I:%M %p').dt.time
     engine = create_engine(f"mysql+pymysql://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}")
     df.to_sql('customer_feedback', con=engine, if_exists='append', index=False)
-
+    engine.dispose()
     return "Successfully inserted"
 
 
@@ -45,7 +47,6 @@ def insert_product_data():
     df['Price'] = df['Price'].astype(int)
     engine = create_engine(f"mysql+pymysql://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}")
     df.to_sql('products', con=engine, if_exists='append', index=False)
-
     return "Successfully inserted products"
 
 
@@ -53,8 +54,8 @@ def insert_product_data():
 def get_service_response():
     review = request.form['review']
     preprocessed_tokens = preprocess_text(review)
-    sentimental_analysis = perform_sentiment_analysis(preprocessed_tokens)
-    prediction = get_result(review)
+    sentiment_score = perform_sentiment_analysis(preprocessed_tokens)
+    prediction = get_result(review, db_config, sentiment_score, preprocessed_tokens)
     return prediction
 
 
