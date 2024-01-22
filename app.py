@@ -12,8 +12,8 @@ from preprocess_data import preprocess_text, perform_sentiment_analysis
 from inference import get_result
 app_path = "/home/ubuntu/app"
 
-source_complaint_data = r'./src/updated_feedback_data.csv'
-source_products_data = r'./src/data.csv'
+source_complaint_data = 'src/updated_feedback_data.csv'
+source_products_data = 'src/data.csv'
 
 app = Flask(__name__)
 
