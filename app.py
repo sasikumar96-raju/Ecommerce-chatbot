@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, make_response, jsonify
 import pandas as pd
 import pymysql
 from sqlalchemy import create_engine
+import json
 import nltk 
 nltk.download('punkt')
 nltk.download('wordnet')
@@ -11,18 +12,14 @@ from preprocess_data import preprocess_text, perform_sentiment_analysis
 from inference import get_result
 app_path = "/home/ubuntu/app"
 
-source_complaint_data = '/home/ubuntu/Documents/ecommerce_charbot/src/updated_feedback_data.csv'
-source_products_data = '/home/ubuntu/Documents/ecommerce_charbot/src/data.csv'
+source_complaint_data = r'./src/updated_feedback_data.csv'
+source_products_data = r'./src/data.csv'
 
 app = Flask(__name__)
 
-db_config = {
-    'user': 'root',
-    'password': 'ubuntu',
-    'host': 'localhost',
-    'database': 'sample_ecom',
-    'port': 3306
-}
+
+with open('db_config.json', "r") as json_file:
+    db_config = json.load(json_file)
 
 
 @app.route('/insert_review', methods =["POST"])
